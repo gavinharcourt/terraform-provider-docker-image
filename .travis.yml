@@ -1,0 +1,30 @@
+language: go
+
+go:
+  - 1.7
+
+env:
+  global:
+    - TERRAFORM_VERSION=0.7.2
+
+install:
+  # install terraform
+  - wget "https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+  - unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+
+  # build the plugin
+  - go build github.com/diosmosis/terraform-provider-docker-image
+
+  # for debugging the build
+  - echo "$TRAVIS_BUILD_DIR"
+  - pwd
+  - ls
+
+before_script:
+  # login to ecr
+  - $(aws ecr get-login --region us-east-1) &> /dev/null
+
+  - ./travis/setup.sh
+
+script:
+  - go test ./src
