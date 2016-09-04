@@ -11,8 +11,8 @@ sudo: required
 
 install:
   # install aws cli
-  - pip install requests[security]
-  - pip install --user awscli
+  - sudo pip install requests[security]
+  - sudo pip install awscli
   - export PATH=$PATH:$HOME/.local/bin
 
   # install terraform
