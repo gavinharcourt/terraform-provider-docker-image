@@ -1,10 +1,27 @@
 package dockerImage
 
-import osExec "os/exec"
+import (
+	"fmt"
+	osExec "os/exec"
+)
 
 type dockerExec string
 
-// TODO: need to validate pathToDockerfile in schema
+func (exec dockerExec) validateExecutable() error {
+	dockerVersionCommand := osExec.Command(string(exec), "-v")
+	dockerVersionCommandError := dockerVersionCommand.Run()
+
+	if dockerVersionCommandError == osExec.ErrNotFound {
+		return fmt.Errorf("docker executable '%s' not found: %s", exec, dockerVersionCommandError)
+	}
+
+	if dockerVersionCommandError != nil {
+		return fmt.Errorf("docker version command failed: %s", dockerVersionCommandError)
+	}
+
+	return nil
+}
+
 func (exec dockerExec) buildContainer(pathToDockerfile string, tag string) (string, error) {
 	cmd := osExec.Command(string(exec), "build", "-t", tag, pathToDockerfile)
 

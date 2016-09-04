@@ -1,10 +1,8 @@
 package dockerImage
 
 import (
-	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"os/exec"
 )
 
 // Provider for local/remote docker
@@ -30,14 +28,9 @@ func Provider() terraform.ResourceProvider {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	dockerExecutable := d.Get("docker_executable").(string)
 
-	// TODO: move this to docker_exec.go
-	// check if executable exists
-	dockerVersionCommand := exec.Command(dockerExecutable, "-v")
-	dockerVersionCommandError := dockerVersionCommand.Run()
-	if dockerVersionCommandError == exec.ErrNotFound {
-		return nil, fmt.Errorf("docker executable '%s' not found: %s", dockerExecutable, dockerVersionCommandError)
-	} else if dockerVersionCommandError != nil {
-		return nil, fmt.Errorf("docker version command failed: %s", dockerVersionCommandError)
+	err := dockerExec(dockerExecutable).validateExecutable()
+	if err != nil {
+		return nil, err
 	}
 
 	client := &Config{
