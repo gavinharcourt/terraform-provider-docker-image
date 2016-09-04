@@ -1,6 +1,7 @@
 package dockerImage
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -33,9 +34,9 @@ func dataSourceLocalDockerImageCreate(d *schema.ResourceData, meta interface{}) 
 	pathToDockerfile := d.Get("dockerfile_path").(string)
 	tag := d.Get("tag").(string)
 
-	hash, err := dockerExec(meta.(Config).DockerExecutable).buildContainer(pathToDockerfile, tag)
+	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, tag)
 	if err != nil {
-		return err
+		return fmt.Errorf("Failed to create local docker image: %s", err)
 	}
 
 	d.SetId(hash)
@@ -52,14 +53,18 @@ func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) 
 	pathToDockerfile := d.Get("dockerfile_path").(string)
 	tag := d.Get("tag").(string)
 
-	hash, err := dockerExec(meta.(Config).DockerExecutable).buildContainer(pathToDockerfile, tag)
+	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, tag)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Failed to build local docker image: %s", err)
 	}
 
 	return hash == d.Id(), nil
 }
 
 func dataSourceLocalDockerImageDelete(d *schema.ResourceData, meta interface{}) error {
-	return dockerExec(meta.(Config).DockerExecutable).deleteContainer(d.Id())
+	err := dockerExec(meta.(*Config).DockerExecutable).deleteContainer(d.Id())
+	if err != nil {
+		return fmt.Errorf("Failed to delete local docker image: %s", err)
+	}
+	return nil
 }

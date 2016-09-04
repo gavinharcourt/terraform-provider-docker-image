@@ -19,7 +19,8 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"local_docker_image": dataSourceLocalDockerImage(),
+			"dockerimage_local":  dataSourceLocalDockerImage(),
+			"dockerimage_remote": resourceRemoteDockerImage(),
 		},
 
 		ConfigureFunc: providerConfigure,

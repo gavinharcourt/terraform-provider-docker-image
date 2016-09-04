@@ -1,0 +1,8 @@
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+crash.log
+/test/resources/terraform/terraform-provider-docker-image
+/terraform-provider-docker-image
+/test/resources/app/packaged_data
+

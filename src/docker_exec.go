@@ -3,6 +3,7 @@ package dockerImage
 import (
 	"fmt"
 	osExec "os/exec"
+	"strings"
 )
 
 type dockerExec string
@@ -25,26 +26,45 @@ func (exec dockerExec) validateExecutable() error {
 func (exec dockerExec) buildContainer(pathToDockerfile string, tag string) (string, error) {
 	cmd := osExec.Command(string(exec), "build", "-t", tag, pathToDockerfile)
 
-	err := cmd.Run()
+	tagCmdOutput, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("'build -t' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
 	}
 
 	getHashCmd := osExec.Command(string(exec), "images", "-q", tag)
-	getHashCmdOutput, err := getHashCmd.Output()
+	getHashCmdOutput, err := getHashCmd.CombinedOutput()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("'images -q' command failed: %s\nOutput:\n%s", err, getHashCmdOutput)
 	}
 
 	// TODO: is the [:] necessary? the linter doesn't complain
-	return string(getHashCmdOutput[:]), nil
+	return strings.TrimSpace(string(getHashCmdOutput[:])), nil
 }
 
 func (exec dockerExec) deleteContainer(imageID string) error {
 	cmd := osExec.Command(string(exec), "rmi", imageID)
-	return cmd.Run()
+	rmiCmdOutput, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("'rmi' command failed: %s\nOutput:\n%s", err, rmiCmdOutput)
+	}
+
+	return nil
 }
 
-func (exec dockerExec) pushContainer(imageID string, tag string, repository string) error {
+func (exec dockerExec) pushContainer(imageID string, tag string, registry string) error {
+	fullRemoteTag := fmt.Sprintf("%s/%s", registry, tag)
+
+	cmd := osExec.Command(string(exec), "tag", imageID, fullRemoteTag)
+	tagCmdOutput, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("'tag' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
+	}
+
+	cmd = osExec.Command(string(exec), "push", fullRemoteTag)
+	pushCmdOutput, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("'push' command failed: %s\nOutput:\n%s", err, pushCmdOutput)
+	}
+
 	return nil
 }

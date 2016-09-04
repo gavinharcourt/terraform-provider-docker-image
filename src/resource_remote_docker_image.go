@@ -1,6 +1,7 @@
 package dockerImage
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 	"log"
 )
@@ -25,11 +26,12 @@ func resourceRemoteDockerImage() *schema.Resource {
 				Description: "The tag of the remote docker image.",
 			},
 
-			"repository": &schema.Schema{
+			"registry": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    false,
-				Description: "The remote repository to push the image to.",
+				Optional:    true,
+				Description: "The remote registry to push the image to.",
 				Default:     "",
+				Sensitive:   true,
 			},
 		},
 	}
@@ -38,9 +40,14 @@ func resourceRemoteDockerImage() *schema.Resource {
 func resourceRemoteDockerImageCreate(d *schema.ResourceData, meta interface{}) error {
 	imageID := d.Get("image_id").(string)
 	tag := d.Get("tag").(string)
-	repository := d.Get("repository").(string)
+	registry := d.Get("registry").(string)
 
-	return dockerExec(meta.(Config).DockerExecutable).pushContainer(imageID, tag, repository)
+	err := dockerExec(meta.(*Config).DockerExecutable).pushContainer(imageID, tag, registry)
+	if err != nil {
+		return fmt.Errorf("Failed to push container: %s", err)
+	}
+
+	return nil
 }
 
 func resourceRemoteDockerImageRead(d *schema.ResourceData, meta interface{}) error {
@@ -55,9 +62,14 @@ func resourceRemoteDockerImageRead(d *schema.ResourceData, meta interface{}) err
 func resourceRemoteDockerImageUpdate(d *schema.ResourceData, meta interface{}) error {
 	imageID := d.Get("image_id").(string)
 	tag := d.Get("tag").(string)
-	repository := d.Get("repository").(string)
+	registry := d.Get("registry").(string)
 
-	return dockerExec(meta.(Config).DockerExecutable).pushContainer(imageID, tag, repository)
+	err := dockerExec(meta.(*Config).DockerExecutable).pushContainer(imageID, tag, registry)
+	if err != nil {
+		return fmt.Errorf("Failed to push container: %s", err)
+	}
+
+	return nil
 }
 
 func resourceRemoteDockerImageDelete(d *schema.ResourceData, meta interface{}) error {
