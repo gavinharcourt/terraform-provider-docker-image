@@ -13,6 +13,7 @@ func Provider() terraform.ResourceProvider {
 			"docker_executable": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: false,
+				Optional: true,
 				Default:  "docker",
 			},
 		},

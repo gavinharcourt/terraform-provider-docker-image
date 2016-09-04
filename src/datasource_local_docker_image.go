@@ -16,12 +16,14 @@ func dataSourceLocalDockerImage() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Absolute path to the Dockerfile to build.",
+				ForceNew:    true,
 			},
 
 			"tag": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "A short human readable identifier for this image.",
+				ForceNew:    true,
 			},
 		},
 	}
