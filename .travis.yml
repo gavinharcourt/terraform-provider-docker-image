@@ -12,6 +12,9 @@ install:
   - wget "https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
   - unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
 
+  # get terraform source
+  - go get github.com/hashicorp/terraform
+
   # build the plugin
   - go build github.com/diosmosis/terraform-provider-docker-image
 
