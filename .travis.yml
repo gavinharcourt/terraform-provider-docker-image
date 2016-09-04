@@ -7,6 +7,8 @@ env:
   global:
     - TERRAFORM_VERSION=0.7.2
 
+sudo: required
+
 install:
   # install aws cli
   - pip install requests[security]
