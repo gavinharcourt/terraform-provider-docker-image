@@ -8,6 +8,10 @@ env:
     - TERRAFORM_VERSION=0.7.2
 
 install:
+  # install aws cli
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+
   # install terraform
   - wget "https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
   - unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
