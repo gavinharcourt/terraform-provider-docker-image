@@ -6,14 +6,30 @@ go:
 env:
   global:
     - TERRAFORM_VERSION=0.7.2
+    - DOCKER_COMPOSE_VERSION=1.8.0-rc1
+
+services:
+  - docker
 
 sudo: required
 
 install:
+  # install docker
+  - sudo apt-get update
+  - sudo apt-get -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" install docker-engine
+  - docker -v
+
+  # install docker-compose
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose -v
+
   # install aws cli
   - sudo pip install requests[security]
   - sudo pip install awscli
-  - export PATH=$PATH:$HOME/.local/bin
+  - export PATH=$PATH:$HOME/.local/bin:/usr/local/bin
 
   # install terraform
   - wget "https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
@@ -37,4 +53,5 @@ before_script:
   - ./travis/setup.sh
 
 script:
-  - go test ./src
+  - cd $TRAVIS_BUILD_DIR
+  - go test ./src/*_test.go

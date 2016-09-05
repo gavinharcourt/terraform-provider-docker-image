@@ -12,7 +12,7 @@ import (
 )
 
 var basePath string
-var registryId string
+var registryID string
 var testImageTag string
 
 func TestMain(m *testing.M) {
@@ -35,8 +35,8 @@ func checkTestCanRun() {
 		panic("AWS_SECRET_ACCESS_KEY must be set for the tests to run")
 	}
 
-	registryId = os.Getenv("ECR_REPOSITORY")
-	if registryId == "" {
+	registryID = os.Getenv("ECR_REPOSITORY")
+	if registryID == "" {
 		panic("ECR_REPOSITORY must be set for the tests to run")
 	}
 
@@ -77,7 +77,8 @@ func TestTerraformPlan(t *testing.T) {
 		t.Error("'terraform plan' doesn't want to build dockerimage_remote resource.")
 	}
 
-	if !strings.Contains(out, "2 to add, 0 to change, 0 to destroy.") {
+	if !strings.Contains(out, "2 to add, 0 to change, 0 to destroy.") &&
+		!strings.Contains(out, "3 to add, 0 to change, 0 to destroy.") {
 		t.Error("Expected 'terraform plan' to want to add two resources.")
 	}
 
@@ -133,7 +134,7 @@ func getLocalDockerImage() (string, error) {
 
 func getRemoteDockerImage() (string, error) {
 	getImageInfoCmd := exec.Command("aws", "ecr", "batch-get-image",
-		"--registry-id="+registryId, "--repository-name="+testImageTag, "--image-ids=imageTag=latest")
+		"--registry-id="+registryID, "--repository-name="+testImageTag, "--image-ids=imageTag=latest")
 	getImageInfoCmdOutputBytes, err := getImageInfoCmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("Failed to run batch-get-image: %s\nOutput: %s", err, getImageInfoCmdOutputBytes)
@@ -142,7 +143,12 @@ func getRemoteDockerImage() (string, error) {
 	var getImageInfoCmdOutput interface{}
 	json.Unmarshal(getImageInfoCmdOutputBytes, &getImageInfoCmdOutput)
 
-	imageInfo := getImageInfoCmdOutput.(map[string]interface{})["images"].([]interface{})[0]
+	images := getImageInfoCmdOutput.(map[string]interface{})["images"].([]interface{})
+	if len(images) == 0 {
+		return "", nil
+	}
+
+	imageInfo := images[0]
 	imageDigest := imageInfo.(map[string]interface{})["imageId"].(map[string]interface{})["imageDigest"].(string)
 
 	return imageDigest, nil
