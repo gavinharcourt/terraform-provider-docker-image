@@ -59,7 +59,8 @@ func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) 
 		return false, fmt.Errorf("Failed to build local docker image: %s", err)
 	}
 
-	return hash == d.Id(), nil
+	d.SetId(registry)
+	return nil
 }
 
 func dataSourceLocalDockerImageDelete(d *schema.ResourceData, meta interface{}) error {
