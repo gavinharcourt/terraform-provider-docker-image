@@ -3,7 +3,6 @@ package dockerImage
 import (
 	"fmt"
 	osExec "os/exec"
-	"strings"
 )
 
 type dockerExec string
@@ -23,7 +22,7 @@ func (exec dockerExec) validateExecutable() error {
 	return nil
 }
 
-func (exec dockerExec) buildContainer(pathToDockerfile string, registry string) (string, error) {
+func (exec dockerExec) buildContainer(pathToDockerfile string, registry string) error {
 	cmd := osExec.Command(string(exec), "build", "-t", registry, pathToDockerfile)
 
 	tagCmdOutput, err := cmd.CombinedOutput()
