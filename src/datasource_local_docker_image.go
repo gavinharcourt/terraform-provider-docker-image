@@ -35,12 +35,12 @@ func dataSourceLocalDockerImageCreate(d *schema.ResourceData, meta interface{}) 
 	pathToDockerfile := d.Get("dockerfile_path").(string)
 	registry := d.Get("registry").(string)
 
-	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
+	err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
 	if err != nil {
 		return fmt.Errorf("Failed to create local docker image: %s", err)
 	}
 
-	d.SetId(hash)
+	d.SetId(registry)
 	return nil
 }
 
@@ -54,7 +54,7 @@ func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) 
 	pathToDockerfile := d.Get("dockerfile_path").(string)
 	registry := d.Get("registry").(string)
 
-	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
+	err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
 	if err != nil {
 		return false, fmt.Errorf("Failed to build local docker image: %s", err)
 	}
@@ -63,9 +63,6 @@ func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) 
 }
 
 func dataSourceLocalDockerImageDelete(d *schema.ResourceData, meta interface{}) error {
-	err := dockerExec(meta.(*Config).DockerExecutable).deleteContainer(d.Id())
-	if err != nil {
-		return fmt.Errorf("Failed to delete local docker image: %s", err)
-	}
+	log.Println("[WARN] deleting local docker images is not currently supported, they must be deleted manually.")
 	return nil
 }

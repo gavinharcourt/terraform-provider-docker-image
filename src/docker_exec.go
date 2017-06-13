@@ -31,23 +31,6 @@ func (exec dockerExec) buildContainer(pathToDockerfile string, registry string) 
 		return "", fmt.Errorf("'build -t' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
 	}
 
-	getHashCmd := osExec.Command(string(exec), "images", "-q", registry)
-	getHashCmdOutput, err := getHashCmd.CombinedOutput()
-	if err != nil {
-		return "", fmt.Errorf("'images -q' command failed: %s\nOutput:\n%s", err, getHashCmdOutput)
-	}
-
-	// TODO: is the [:] necessary? the linter doesn't complain
-	return strings.TrimSpace(string(getHashCmdOutput[:])), nil
-}
-
-func (exec dockerExec) deleteContainer(imageID string) error {
-	cmd := osExec.Command(string(exec), "rmi", imageID)
-	rmiCmdOutput, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("'rmi' command failed: %s\nOutput:\n%s", err, rmiCmdOutput)
-	}
-
 	return nil
 }
 
