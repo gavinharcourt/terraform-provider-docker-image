@@ -57,7 +57,7 @@ func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) 
 
 	err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
 	if err != nil {
-		return false, fmt.Errorf("Failed to build local docker image: %s", err)
+		return fmt.Errorf("Failed to build local docker image: %s", err)
 	}
 
 	d.SetId(registry)

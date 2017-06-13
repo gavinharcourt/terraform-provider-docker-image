@@ -27,13 +27,13 @@ func (exec dockerExec) buildContainer(pathToDockerfile string, registry string) 
 
 	tagCmdOutput, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("'build -t' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
+		return fmt.Errorf("'build -t' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
 	}
 
 	return nil
 }
 
-func (exec dockerExec) pushContainer(imageID string, tag string, registry string) error {
+func (exec dockerExec) pushContainer(imageID string, registry string) error {
 	cmd := osExec.Command(string(exec), "tag", imageID, registry)
 	tagCmdOutput, err := cmd.CombinedOutput()
 	if err != nil {
