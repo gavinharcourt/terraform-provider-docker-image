@@ -52,15 +52,13 @@ func (exec dockerExec) deleteContainer(imageID string) error {
 }
 
 func (exec dockerExec) pushContainer(imageID string, tag string, registry string) error {
-	fullRemoteTag := fmt.Sprintf("%s/%s", registry, tag)
-
-	cmd := osExec.Command(string(exec), "tag", imageID, fullRemoteTag)
+	cmd := osExec.Command(string(exec), "tag", imageID, registry)
 	tagCmdOutput, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("'tag' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
 	}
 
-	cmd = osExec.Command(string(exec), "push", fullRemoteTag)
+	cmd = osExec.Command(string(exec), "push", registry)
 	pushCmdOutput, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("'push' command failed: %s\nOutput:\n%s", err, pushCmdOutput)

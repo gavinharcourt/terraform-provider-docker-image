@@ -54,7 +54,7 @@ resource "dockerimage_local" "myimage" {
 
 resource "dockerimage_remote" "myimage" {
   tag = "terraform-provider-docker-image-test:latest" # the tag for the remote image
-  registry = "${aws_ecr_repository.myrepository.registry_id}.dkr.ecr.us-east-1.amazonaws.com" # the registry's hostname
+  registry = "${aws_ecr_repository.myrepository.repository_url}" # the repository url
   image_id = "${dockerimage_local.myimage.id}" # the image ID to push
 }
 ```
