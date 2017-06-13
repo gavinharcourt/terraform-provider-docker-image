@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/diosmosis/terraform-provider-docker-image/src"
+	"github.com/zongoose/terraform-provider-docker-image/src"
 	"github.com/hashicorp/terraform/plugin"
 )
 

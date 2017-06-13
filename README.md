@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/diosmosis/terraform-provider-docker-image.svg?branch=master)](https://travis-ci.org/diosmosis/terraform-provider-docker-image)
+[![Build Status](https://travis-ci.org/zongoose/terraform-provider-docker-image.svg?branch=master)](https://travis-ci.org/zongoose/terraform-provider-docker-image)
 
 # terraform-provider-docker-image
 
@@ -26,7 +26,7 @@ This plugin provides the following resources:
 To use this plugin, you'll have to build it w/:
 
 ```
-$ go build github.com/diosmosis/terraform-provider-docker-image
+$ go build github.com/zongoose/terraform-provider-docker-image
 ```
 
 then add the following to your `~/.terraformrc` file:

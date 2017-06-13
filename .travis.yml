@@ -39,7 +39,7 @@ install:
   - go get github.com/hashicorp/terraform
 
   # build the plugin
-  - go build github.com/diosmosis/terraform-provider-docker-image
+  - go build github.com/zongoose/terraform-provider-docker-image
 
   # for debugging the build
   - echo "$TRAVIS_BUILD_DIR"

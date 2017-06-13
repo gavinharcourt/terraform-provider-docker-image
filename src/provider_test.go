@@ -1,7 +1,7 @@
 package dockerImage
 
 import (
-	"github.com/diosmosis/terraform-provider-docker-image/src"
+	"github.com/zongoose/terraform-provider-docker-image/src"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 	"testing"
