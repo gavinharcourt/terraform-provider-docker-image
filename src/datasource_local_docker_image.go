@@ -3,6 +3,7 @@ package dockerImage
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
+	"log"
 )
 
 func dataSourceLocalDockerImage() *schema.Resource {
@@ -50,7 +51,7 @@ func dataSourceLocalDockerImageRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) (bool, error) {
+func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) error {
 	pathToDockerfile := d.Get("dockerfile_path").(string)
 	registry := d.Get("registry").(string)
 
