@@ -20,11 +20,12 @@ func dataSourceLocalDockerImage() *schema.Resource {
 				ForceNew:    true,
 			},
 
-			"tag": &schema.Schema{
+			"registry": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "A short human readable identifier for this image.",
-				ForceNew:    true,
+				Optional:    true,
+				Description: "The remote registry to push the image to.",
+				Default:     "",
+				Sensitive:   true,
 			},
 		},
 	}
@@ -32,9 +33,9 @@ func dataSourceLocalDockerImage() *schema.Resource {
 
 func dataSourceLocalDockerImageCreate(d *schema.ResourceData, meta interface{}) error {
 	pathToDockerfile := d.Get("dockerfile_path").(string)
-	tag := d.Get("tag").(string)
+	registry := d.Get("registry").(string)
 
-	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, tag)
+	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
 	if err != nil {
 		return fmt.Errorf("Failed to create local docker image: %s", err)
 	}
@@ -51,9 +52,9 @@ func dataSourceLocalDockerImageRead(d *schema.ResourceData, meta interface{}) er
 
 func dataSourceLocalDockerImageExists(d *schema.ResourceData, meta interface{}) (bool, error) {
 	pathToDockerfile := d.Get("dockerfile_path").(string)
-	tag := d.Get("tag").(string)
+	registry := d.Get("registry").(string)
 
-	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, tag)
+	hash, err := dockerExec(meta.(*Config).DockerExecutable).buildContainer(pathToDockerfile, registry)
 	if err != nil {
 		return false, fmt.Errorf("Failed to build local docker image: %s", err)
 	}

@@ -23,15 +23,15 @@ func (exec dockerExec) validateExecutable() error {
 	return nil
 }
 
-func (exec dockerExec) buildContainer(pathToDockerfile string, tag string) (string, error) {
-	cmd := osExec.Command(string(exec), "build", "-t", tag, pathToDockerfile)
+func (exec dockerExec) buildContainer(pathToDockerfile string, registry string) (string, error) {
+	cmd := osExec.Command(string(exec), "build", "-t", registry, pathToDockerfile)
 
 	tagCmdOutput, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("'build -t' command failed: %s\nOutput:\n%s", err, tagCmdOutput)
 	}
 
-	getHashCmd := osExec.Command(string(exec), "images", "-q", tag)
+	getHashCmd := osExec.Command(string(exec), "images", "-q", registry)
 	getHashCmdOutput, err := getHashCmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("'images -q' command failed: %s\nOutput:\n%s", err, getHashCmdOutput)
