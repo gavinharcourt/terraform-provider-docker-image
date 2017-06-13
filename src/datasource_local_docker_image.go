@@ -10,7 +10,7 @@ func dataSourceLocalDockerImage() *schema.Resource {
 	return &schema.Resource{
 		Create: dataSourceLocalDockerImageCreate,
 		Read:   dataSourceLocalDockerImageRead,
-		Exists: dataSourceLocalDockerImageExists,
+		Update: dataSourceLocalDockerImageExists,
 		Delete: dataSourceLocalDockerImageDelete,
 
 		Schema: map[string]*schema.Schema{
